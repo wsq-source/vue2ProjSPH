@@ -1,7 +1,56 @@
 <template>
     <div class="type-nav">
         <div class="container">
-            <h2 class="all">全部商品分类</h2>
+            <!-- 事件委派(委托) -->
+            <div @mouseleave="leaveIndex">
+                <h2 class="all">全部商品分类</h2>
+                <!-- 三级联动 -->
+                <div class="sort">
+                    <!-- 利用事件委派 + 编程式导航实现路由的跳转与传递参数 -->
+                    <div class="all-sort-list2" @click="goSearch($event)">
+                        <div
+                            class="item"
+                            v-for="(c1, index) in categoryList"
+                            :key="c1.categoryId"
+                            :class="{ cur: currentIndex === index }"
+                        >
+                            <h3 @mouseenter="changeIndex(index)">
+                                <a :data-categoryName="c1.categoryName" :data-category1Id="c1.categoryId">{{ c1.categoryName }}</a>
+                                <!-- <router-link to="/search">{{ c1.categoryName }}</router-link> -->
+                            </h3>
+                            <!-- 二级、三级分类 -->
+                            <div
+                                class="item-list clearfix"
+                                :style="{
+                                    display: currentIndex === index ? 'block' : 'none',
+                                }"
+                            >
+                                <div
+                                    class="subitem"
+                                    v-for="c2 in c1.categoryChild"
+                                    :key="c2.categoryId"
+                                >
+                                    <dl class="fore">
+                                        <dt>
+                                            <a :data-categoryName="c2.categoryName" :data-category2Id="c2.categoryId">{{ c2.categoryName }}</a>
+                                            <!-- <router-link to="/search">{{ c2.categoryName }}</router-link> -->
+                                        </dt>
+                                        <dd>
+                                            <em
+                                                v-for="c3 in c2.categoryChild"
+                                                :key="c3.categoryId"
+                                            >
+                                                <a :data-categoryName="c3.categoryName" :data-category3Id="c3.categoryId">{{ c3.categoryName }}</a>
+                                                <!-- <router-link to="/search">{{ c3.categoryName }}</router-link> -->
+                                            </em>
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <nav class="nav">
                 <a href="###">服装城</a>
                 <a href="###">美妆馆</a>
@@ -12,52 +61,92 @@
                 <a href="###">有趣</a>
                 <a href="###">秒杀</a>
             </nav>
-            <div class="sort">
-                <div class="all-sort-list2">
-                    <div class="item bo" v-for="(c1) in categoryList" :key="c1.categoryId">
-                        <h3>
-                            <a href="">{{c1.categoryName}}</a>
-                        </h3>
-                        <div class="item-list clearfix">
-                            <div class="subitem" v-for="(c2) in c1.categoryChild" :key="c2.categoryId">
-                                <dl class="fore">
-                                    <dt>
-                                        <a href="">{{c2.categoryName}}</a>
-                                    </dt>
-                                    <dd>
-                                        <em v-for="(c3) in c2.categoryChild" :key="c3.categoryId">
-                                            <a href="">{{c3.categoryName}}</a>
-                                        </em>
-                                    </dd>
-                                </dl>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </template>
 
 <script>
-import {mapState} from "vuex";
+import { mapState } from "vuex";
+import throttle from "lodash/throttle"; // 把lodash全部功能函数引入, 最好按需加载
 
 export default {
     name: "TypeNav",
+    data() {
+        return {
+            // 存储用户鼠标移到哪一个分类
+            currentIndex: -1,
+        };
+    },
     // 组件挂载完毕: 可以向服务器发请求
-    mounted(){
+    mounted() {
         // 通知vuex发请求, 获取数据, 存储于仓库中
         this.$store.dispatch("categoryList");
     },
-    computed:{
+    computed: {
         ...mapState({
             // 右侧需要的是一个函数, 当使用这个计算属性时, 右侧函数会立即执行一次
             // 会注入一个参数state, 即大仓库中的数据
-            categoryList(state){
+            categoryList(state) {
                 return state.home.categoryList;
+            },
+        }),
+    },
+    methods: {
+        // 鼠标进入修改响应式数据currentIndex属性
+        /* changeIndex(index) {
+            // index 鼠标移入某一个一级分类的元素的索引值
+            // 正常情况(用户慢慢地操作) 鼠标进入, 每一个一级分类h3都会触发鼠标进入事件
+            // 非正常情况(用户操作很快) 全部地一级分类都应该触发鼠标进入事件, 但经过测试, 只有部分h3触发了
+            // 就是由于用户行为过快, 导致浏览器反应不过来. 如果当前回调函数有大量业务, 则有可能出现卡顿现象.
+            this.currentIndex = index;
+            console.log("鼠标进入",this.currentIndex);
+        }, */
+        // throttle节流函数别用箭头函数, 可能出现上下文this的问题
+        changeIndex: throttle(function(index){
+            this.currentIndex = index;
+            // console.log("鼠标进入", this.currentIndex);
+        }, 50),
+
+        // 一级分类鼠标移出的事件回调
+        leaveIndex() {
+            // 鼠标移出, 让currentIndex变为-1
+            this.currentIndex = -1;
+            // console.log("鼠标移出",this.currentIndex);
+        },
+        // 路由跳转
+        goSearch(e){
+            // 最好的方案: 编程式导航 + 事件委派
+            // 利用事件委派存在一些问题: 1.点击的一定是a标签 2.如何获取参数(1,2,3级分类的产品名字和id)
+            // 事件委派, 是把所有的子节点(h3,dt,dl,em)的事件委派给父节点
+            // 点击a标签才能进行路由跳转, 怎么确定点击的一定是a标签
+            // 另外一个问题: 即使能确定点击的是a标签, 如何区分是一级、二级、三级分类的a标签
+            
+            // 第一个问题: 为子结点中的a标签加上自定义属性 data-categoryName, 其余的子节点是没有的
+            let element = e.target;
+            // 获取到当前出发这个事件的节点(h3,a,dt,dl), 需要带有 data-categoryName 这样的节点一定是a标签
+            // 节点有一个dataset属性, 可以获取到节点的自定义属性和属性值
+            // console.log(element, element.dataset);
+            
+            let {categoryname, category1id, category2id, category3id} = element.dataset;
+            // 如果标签身上拥有categoryname一定是a标签
+            if(categoryname){
+                // 整理路由跳转的参数
+                let location = {name: "search"};
+                let query = {categoryName: categoryname};
+                // 一级分类、二级分类、三级分类的a标签
+                if(category1id){
+                    query.category1id = category1id;
+                }else if(category2id){
+                    query.category2id = category2id;
+                }else if(category3id){
+                    query.category3id = category3id;
+                }
+                // 整理完参数
+                location.query = query;
+                this.$router.push(location);
             }
-        })
-    }
+        }
+    },
 };
 </script>
 
@@ -171,11 +260,16 @@ export default {
                         }
                     }
 
-                    &:hover {
+                    /* &:hover {
+                        // background-color: skyblue;
                         .item-list {
                             display: block;
                         }
-                    }
+                    } */
+                }
+
+                .cur {
+                    background-color: skyblue;
                 }
             }
         }
