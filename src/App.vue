@@ -31,6 +31,11 @@ export default {
     },
     components: { Header, Footer },
     mounted() {
+        // 通知vuex发请求, 获取数据, 存储于仓库中
+        // 在App.vue的mount()中, 一挂载就发请求且请求只发一次, 提升性能
+        // 不要写在main.js中, this是undefined, 不是组件实例
+        this.$store.dispatch("categoryList");
+        
         console.log(this);
     },
     updated(){

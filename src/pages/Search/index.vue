@@ -1,12 +1,13 @@
 <template>
  <div>
-    <h2>params参数 {{$route.params.keyword}} {{keyword}}</h2>
-    <h2>query参数 {{$route.query.k}} {{k}}</h2>
+    <!-- 这是Search模块 -->
+    <TypeNav/>
  </div>
 </template>
  
 <script>
 export default {
+    name: "Search",
     data() {
         return {
         }

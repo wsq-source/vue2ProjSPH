@@ -12,6 +12,12 @@ import router from "./router/index";
 // 引入仓库
 import store from "./store/index";
 
+// 引入mock数据
+import "@/mock/mockServer";
+
+// 引入swiper样式
+import "swiper/dist/css/swiper.css";
+
 Vue.config.productionTip = false;
 
 new Vue({

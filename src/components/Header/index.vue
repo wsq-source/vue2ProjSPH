@@ -62,7 +62,7 @@ export default {
         };
     },
     methods: {
-        // 搜索按钮, 跳转到search路由
+        // 搜索按钮, 跳转到/search路由
         goSearch() {
             // 路由传参
             // 第一种: 字符串形式
@@ -113,15 +113,27 @@ export default {
 
             // 4.路由组件能不能传递props数据?
             // 可以的: 三种写法, 见 router文件夹中的index.js
-            this.$router.push({
-                name: "search",
-                query: {
-                    k: this.keyword.toUpperCase(),
-                },
-                params: {
-                    keyword: this.keyword,
-                },
-            });
+
+            // 如果点击搜索时, 路由上已经有了query参数(左侧分类参数), 则将其加入location配置对象中
+            // this.$route.query是存在的属性, 没有赋值是null, null转换成boolean是true, 所以不必在if外再写this.$router.push()了
+            if (this.$route.query) {
+                let location = {
+                    name: "search",
+                    params: { keyword: this.keyword || undefined },
+                };
+                location.query = this.$route.query;
+                this.$router.push(location);
+            }
+
+            // this.$router.push({
+            //     name: "search",
+            //     /* query: {
+            //         k: this.keyword.toUpperCase(),
+            //     }, */
+            //     params: {
+            //         keyword: this.keyword || undefined,
+            //     },
+            // });
             console.log(this); // 当前vc实例search
         },
     },
