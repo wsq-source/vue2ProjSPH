@@ -21,6 +21,11 @@ import "@/mock/mockServer";
 // 引入swiper样式
 import "swiper/dist/css/swiper.css";
 
+// 测试区域
+// import { reqGetSearchInfo } from "./api";
+// console.log(reqGetSearchInfo());
+// 
+
 Vue.config.productionTip = false;
 
 new Vue({
