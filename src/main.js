@@ -32,4 +32,8 @@ new Vue({
     render: (h) => h(App),
     router, // 注册路由, 当这里书写router的时候, 组件身上都拥有$route, $router属性
     store, // 注册store, 组件身上会多一个属性$store属性
+    beforeCreate(){
+        // 配置全局事件总线$bus
+        Vue.prototype.$bus = this;
+    },
 }).$mount("#app");

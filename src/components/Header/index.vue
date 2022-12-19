@@ -61,6 +61,12 @@ export default {
             keyword: "",
         };
     },
+    mounted(){
+        // 通过全局事件总线清除关键字
+        this.$bus.$on("clearKeyword",()=>{
+            this.keyword = "";
+        })
+    },
     methods: {
         // 搜索按钮, 跳转到/search路由
         goSearch() {

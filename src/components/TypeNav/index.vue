@@ -158,6 +158,7 @@ export default {
             // 节点有一个dataset属性, 可以获取到节点的自定义属性和属性值
             // console.log(element, element.dataset);
 
+            // dataset中的属性都是小写的, 解构出来放到query中要把id改成Id
             let { categoryname, category1id, category2id, category3id } = element.dataset;
             // 如果标签身上拥有categoryname一定是a标签
             if (categoryname) {
@@ -166,11 +167,11 @@ export default {
                 let query = { categoryName: categoryname };
                 // 一级分类、二级分类、三级分类的a标签
                 if (category1id) {
-                    query.category1id = category1id;
+                    query.category1Id = category1id;
                 } else if (category2id) {
-                    query.category2id = category2id;
+                    query.category2Id = category2id;
                 } else if (category3id) {
-                    query.category3id = category3id;
+                    query.category3Id = category3id;
                 }
 
                 // 判断: 如果路由跳转的时候, 带有params参数, 捎带着传递过去
