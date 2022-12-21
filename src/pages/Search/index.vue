@@ -95,35 +95,8 @@
             </ul>
           </div>
           <!-- 分页器 -->
-          <div class="fr page">
-            <div class="sui-pagination clearfix">
-              <ul>
-                <li class="prev disabled">
-                  <a href="#">«上一页</a>
-                </li>
-                <li class="active">
-                  <a href="#">1</a>
-                </li>
-                <li>
-                  <a href="#">2</a>
-                </li>
-                <li>
-                  <a href="#">3</a>
-                </li>
-                <li>
-                  <a href="#">4</a>
-                </li>
-                <li>
-                  <a href="#">5</a>
-                </li>
-                <li class="dotted"><span>...</span></li>
-                <li class="next">
-                  <a href="#">下一页»</a>
-                </li>
-              </ul>
-              <div><span>共10页&nbsp;</span></div>
-            </div>
-          </div>
+          <!-- 测试阶段, 将来数据需要替换为来自服务器的数据 -->
+          <Pagination :pageNo="searchParams.pageNo" :pageSize="searchParams.pageSize" :total="total" :continues="5" @getPageNo="getPageNo"/>
         </div>
       </div>
     </div>
@@ -132,7 +105,7 @@
 
 <script>
 import SearchSelector from "./SearchSelector/SearchSelector";
-import { mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
 
 export default {
   name: "Search",
@@ -171,6 +144,14 @@ export default {
   computed: {
     // mapGetters里面的写法, 传递一个数组, 因为getters计算是没有划分(home, search)模块的
     ...mapGetters(["goodsList", "trademarkList", "attrsList"]),
+    ...mapState({
+      total(state){
+        return state.search.searchList.total;
+      },
+      continues(state){
+        return state.search.searchList.continues;
+      }
+    }),
     isActiveOne(){
       return this.searchParams.order.split(':')[0] == 1;
     },
@@ -268,6 +249,14 @@ export default {
       this.searchParams.order = newOrder;
       this.getData();
     },
+    // 自定义事件回调获取pageNo
+    getPageNo(pageNo){
+      console.log(pageNo);
+      // 整理参数
+      this.searchParams.pageNo = pageNo;
+      this.getData();
+    }
+    
   },
   // 监听组件实例身上属性值的变化
   watch: {
