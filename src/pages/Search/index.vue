@@ -63,9 +63,10 @@
               <li class="yui3-u-1-5" v-for="(good, index) in goodsList" :key="good.id">
                 <div class="list-wrap">
                   <div class="p-img">
-                    <a href="item.html" target="_blank">
+                    <!-- 在路由跳转的时候带上id(params参数) -->
+                    <router-link :to="`/detail/${good.id}`">
                       <img :src="good.defaultImg"/>
-                    </a>
+                    </router-link>
                   </div>
                   <div class="price">
                     <strong>
@@ -96,7 +97,8 @@
           </div>
           <!-- 分页器 -->
           <!-- 测试阶段, 将来数据需要替换为来自服务器的数据 -->
-          <Pagination :pageNo="searchParams.pageNo" :pageSize="searchParams.pageSize" :total="total" :continues="5" @getPageNo="getPageNo"/>
+          <Pagination :pageNo="searchParams.pageNo" 
+          :pageSize="searchParams.pageSize" :total="total" :continues="5" @getPageNo="getPageNo"/>
         </div>
       </div>
     </div>
@@ -148,9 +150,9 @@ export default {
       total(state){
         return state.search.searchList.total;
       },
-      continues(state){
+      /* continues(state){
         return state.search.searchList.continues;
-      }
+      }, */
     }),
     isActiveOne(){
       return this.searchParams.order.split(':')[0] == 1;
@@ -255,7 +257,7 @@ export default {
       // 整理参数
       this.searchParams.pageNo = pageNo;
       this.getData();
-    }
+    },
     
   },
   // 监听组件实例身上属性值的变化

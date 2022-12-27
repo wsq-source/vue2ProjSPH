@@ -5,6 +5,10 @@ import nProgress from "nprogress";
 // 引入进度条样式 修改进度条颜色去nprogress.css修改 #nprogress .bar
 import "nprogress/nprogress.css";
 
+// 在当前模块中引入store
+import store from "@/store";
+
+
 // 1.利用axios对象的create方法, 去创建一个axios实例
 // 2.request就是axios, 只不过稍微配置了一下
 const requests = axios.create({
@@ -18,6 +22,10 @@ requests.interceptors.request.use((config) => {
     // config: 配置对象, 对象里面有一个属性很重要, headers请求头
     // 进度条开始动
     nProgress.start();
+    if(store.state.detail.uuid_token){
+        // 请求头添加一个字段, 和后端商量好的
+        config.headers.userTempId = store.state.detail.uuid_token;
+    }
     return config;
 });
 

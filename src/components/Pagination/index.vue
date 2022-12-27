@@ -8,7 +8,7 @@
     <!-- 中间部分 -->
     <!-- 遍历 end-start+1次即continues次 -->
     <template v-for="(page, index) in startNumAndEndNum.end">
-        <button v-if="page >= startNumAndEndNum.start" @click="$emit('getPageNo', page)" :class="{active: page === pageNo}">{{ page }}</button>
+      <button v-if="page >= startNumAndEndNum.start" @click="$emit('getPageNo', page)" :class="{active: page === pageNo}">{{ page }}</button>
     </template>
     <!-- <button v-for="(page, index) in startNumAndEndNum.end" :key="index">{{ page }}</button> -->
 
@@ -24,6 +24,7 @@
 <script>
 export default {
   name: "Pagination",
+  // 父组件传递给子组件的数据: 当前页、每一页展示多少条数据、数据总个数、连续的页码数
   props: ["pageNo", "pageSize", "total", "continues"],
   computed: {
     totalPage() {
@@ -53,7 +54,7 @@ export default {
             start = end - this.continues + 1;
         }
       }
-      return {start, end};
+      return { start, end };
     },
   },
 };
