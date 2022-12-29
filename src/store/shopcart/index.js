@@ -35,13 +35,38 @@ const actions = {
             Promise.reject(new Error("failed"));
         }
     },
+    // 删除选中的产品
+    deleteAllCheckedCart({dispatch, getters}){
+        // context 小仓库, commit getters dispatch state
+        // 获取购物车中全部的产品
+        let cartInfoList = getters.cartList.cartInfoList
+        let promiseAll = [];
+        cartInfoList.forEach(item => {
+            if(item.isChecked === 1){
+                // 将每一次返回的promise添加到数组中
+                let promise = dispatch("deleteCartListBySkuId", item.skuId);
+                promiseAll.push(promise);
+            }
+            // item.isChecked === 1 && dispatch("deleteCartListBySkuId", item.skuId);
+        });
+        return Promise.all(promiseAll);
+    },
+    // 修改全部产品的状态
+    updateAllCartIsChecked({dispatch, state, getters}, isChecked){
+        let promiseAll = [];
+        // 注意在getters中cartList是一个对象, 而在state中cartList是一个数组
+        state.cartList[0].cartInfoList.forEach(item => {
+            let promise = dispatch("updateCheckedById", {skuId: item.skuId, isChecked});
+            promiseAll.push(promise);
+        });
+        return Promise.all(promiseAll);
+    },
 };
 // 简化数组
 const getters = {
     cartList(state){
         return state.cartList[0] || {};
     },
-
 };
 
 export default {

@@ -92,3 +92,32 @@ export const reqUpdateCheckedById = (skuId, isChecked) => {
         method: "get",
     })
 }
+
+// 获取注册验证码
+// /api/user/passport/sendCode/{phone}  get
+export const reqGetCode = (phone) => {
+    return requests({
+        url: `/user/passport/sendCode/${phone}`,
+        method: "get",
+    })
+}
+
+// 用户注册
+// /api/user/passport/register  post  phone,code,password
+export const reqUserRegister = (data) => {
+    return requests({
+        url: "/user/passport/register",
+        data,
+        method: "post",
+    })
+}
+
+// 用户登录
+// /api/user/passport/login  post  phone,password
+export const reqUserLogin = (data) => {
+    return requests({
+        url: "/user/passport/login",
+        data,
+        method: "post",
+    })
+}
