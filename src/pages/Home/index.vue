@@ -28,15 +28,24 @@ export default {
     mounted(){
         // 派发action, 获取floor组件的数据
         this.$store.dispatch("getFloorList");
+        // 登录了就获取用户信息在首页展示
+        /* if(this.$store.state.user.token){
+            this.$store.dispatch("getUserInfo");
+        } */
     },
     computed: {
         ...mapState({
             floorList(state){
                 return state.home.floorList;
             }
-        })
+        }),
     }
 };
 </script>
 
-<style lang="css"></style>
+<style lang="css">
+body{
+    /* 解决关闭弹出框的页面抖动问题 */
+    padding-right: 0 !important; 
+}
+</style>

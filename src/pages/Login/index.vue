@@ -14,6 +14,7 @@
           </ul>
 
           <div class="content">
+            <p>账号15233336666 密码123</p>
             <form action="##">
               <div class="input-text clearFix">
                 <span></span>

@@ -5,18 +5,22 @@
             <div class="container">
                 <div class="loginList">
                     <p>尚品汇欢迎您！</p>
-                    <p>
+                    <!-- 没有用户名, 未登录 -->
+                    <p v-if="!username">
                         <span>请</span>
                         <!-- 声明式导航, 务必要有to属性 -->
                         <router-link to="/login">登录</router-link>
-                        <router-link to="/register" class="register"
-                            >免费注册</router-link
-                        >
+                        <router-link to="/register" class="register">免费注册</router-link>
+                    </p>
+                    <!-- 有用户名, 已登录 -->
+                    <p v-else>
+                        <a href="javascript:;">{{ username }}</a>
+                        <a href="javascript:;" class="register" @click="logout">退出登录</a>
                     </p>
                 </div>
                 <div class="typeList">
                     <a href="###">我的订单</a>
-                    <a href="###">我的购物车</a>
+                    <router-link to="/shopcart">我的购物车</router-link>
                     <a href="###">我的尚品汇</a>
                     <a href="###">尚品汇会员</a>
                     <a href="###">企业采购</a>
@@ -65,7 +69,7 @@ export default {
         // 通过全局事件总线清除关键字
         this.$bus.$on("clearKeyword",()=>{
             this.keyword = "";
-        })
+        });
     },
     methods: {
         // 搜索按钮, 跳转到/search路由
@@ -142,7 +146,25 @@ export default {
             // });
             console.log(this); // 当前vc实例search
         },
+        // 退出登录
+        async logout(){
+            // 1.发请求通知服务器退出登录, 服务器清除一些数据(比如token)
+            // 2.清除项目中的数据(userInfo, token)
+            try {
+                // 如果退出成功回到首页
+                await this.$store.dispatch("userLogout");
+                this.$router.push("/home");
+            } catch (error) {
+                console.log(error.message);
+            }
+        }
     },
+    computed: {
+        // 用户名信息
+        username(){
+            return this.$store.state.user.userInfo.name;
+        },
+    }
 };
 </script>
 

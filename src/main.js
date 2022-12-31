@@ -5,13 +5,20 @@ import App from "./App.vue";
 import TypeNav from "@/components/TypeNav";
 import Carousel from "@/components/Carousel";
 import Pagination from "@/components/Pagination";
+import { Button, MessageBox } from "element-ui";
 
 // 第一个参数: 全局组件的名字  第二个参数: 哪一个组件
 // Vue.component("TypeNav", TypeNav);
 Vue.component(TypeNav.name, TypeNav);
 Vue.component(Carousel.name, Carousel);
 Vue.component(Pagination.name, Pagination);
+// 注册为全局组件
+Vue.component(Button.name, Button);
+// ElementUI注册组件时的另一种写法, 挂在原型上
+Vue.prototype.$msgbox = MessageBox;
+Vue.prototype.$alert = MessageBox.alert;
 
+// 引入路由
 import router from "./router/index";
 
 // 引入仓库
@@ -23,10 +30,8 @@ import "@/mock/mockServer";
 // 引入swiper样式
 import "swiper/dist/css/swiper.css";
 
-// 测试区域
-// import { reqGetSearchInfo } from "./api";
-// console.log(reqGetSearchInfo());
-// 
+// 统一接收api文件夹里面的请求函数
+import * as API from "@/api";
 
 Vue.config.productionTip = false;
 
@@ -37,5 +42,7 @@ new Vue({
     beforeCreate(){
         // 配置全局事件总线$bus
         Vue.prototype.$bus = this;
+        // 配置全局$API到Vue原型上, 组件直接 this.$API.xxx发请求即可
+        Vue.prototype.$API = API;
     },
 }).$mount("#app");

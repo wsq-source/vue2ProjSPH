@@ -1,9 +1,12 @@
 // 用户登录注册小仓库
-import { reqGetCode, reqUserRegister, reqUserLogin } from "@/api";
+import { reqGetCode, reqUserRegister, reqUserLogin, reqUserInfo, reqLogout } from "@/api";
+
+import { setToken, getToken, removeToken } from "@/utils/token";
 
 const state = {
     code: "",
-    token: "",
+    token: getToken(),
+    userInfo: {},
 };
 // 注意: vuex存储数据不是持久化的
 const mutations = {
@@ -12,6 +15,16 @@ const mutations = {
     },
     USERLOGIN(state, token){
         state.token = token;
+    },
+    GETUSERINFO(state, userInfo){
+        state.userInfo = userInfo;
+    },
+    CLEAR(state){
+        // 清空vuex仓库数据
+        state.token = "";
+        state.userInfo = {};
+        // 清除本地存储token
+        removeToken();
     }
 };
 const actions = {
@@ -43,9 +56,33 @@ const actions = {
         // 将来经常通过带token找服务器要用户信息进行展示
         if(result.code === 200){
             commit("USERLOGIN", result.data.token);
+            // 持久化存储token
+            // localStorage.setItem("TOKEN", result.data.token);
+            setToken(result.data.token);
             return "ok";
         }else{
             return Promise.reject(new Error("failed"));
+        }
+    },
+    // 获取用户信息(携带token)
+    async getUserInfo({commit}){
+        let result = await reqUserInfo();
+        if(result.code === 200){
+            commit("GETUSERINFO", result.data);
+            return "ok";
+        }else{
+            return Promise.reject(new Error("getUserInfo failed"));
+        }
+    },
+    // 退出登录
+    async userLogout({commit}){
+        let result = await reqLogout();
+        if(result.code === 200){
+            // action中不能操作state, 提交给mutations去修改
+            commit("CLEAR");
+            return "ok";
+        }else{
+            return Promise.reject(new Error("userLogout failed"));
         }
     },
 };

@@ -30,7 +30,7 @@ export default {
       immediate: true, // 立即监听一次
       handler() {
         // 只能监听到数据已经有了, 但是v-for动态渲染结构我们依然还是没有办法确定的, 因此还是需要用到nextTick
-        console.log("watching");
+        // console.log("watching");
         this.$nextTick(() => {
           var mySwiper = new Swiper(this.$refs.cur, {
             direction: "horizontal", // 垂直切换选项
