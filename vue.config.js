@@ -10,5 +10,6 @@ module.exports = defineConfig({
         // pathRewrite: {"^/api": ""},
       },
     }
-  }
+  },
+  productionSourceMap: false, // 打包时成不生成map文件, false不生成
 })

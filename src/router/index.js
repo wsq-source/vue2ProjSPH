@@ -50,7 +50,7 @@ router.beforeEach(async (to, from, next) => {
     // to, 可以获取到需要跳转的路由信息
     // from, 可以获取到从哪个路由来的信息
     // next, 放行的函数. next()全部放行, next("/login")放行到指定路由, next(false)重置到from来的路由位置
-    console.log(from, to);
+    // console.log(from, to);
 
     // 获取仓库中的token, 判断用户是否登录
     let token = store.state.user.token;
@@ -81,8 +81,14 @@ router.beforeEach(async (to, from, next) => {
             }  
         }
     }else{
-        // 未登录, 放行
-        next();
+        let toPath = to.path;
+        // 未登录, 不能去交易相关、支付相关、个人中心
+        if(toPath.includes("/trade") || toPath.includes("/pay") || toPath.includes("/center")){
+            // 把未登录时想去但去不了的路径的信息, 存储于路由中
+            next("/login?redirect=" + toPath);
+        }else{
+            next();
+        }
     }
 });
 

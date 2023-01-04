@@ -33,6 +33,25 @@ import "swiper/dist/css/swiper.css";
 // 统一接收api文件夹里面的请求函数
 import * as API from "@/api";
 
+// 引入图片
+import loadingImg from "@/assets/images/loading.gif";
+// 引入插件
+import VueLazyload from "vue-lazyload";
+// 注册插件
+Vue.use(VueLazyload, {
+    loading: loadingImg, // 懒加载默认的图片
+});
+
+// 引入自定义插件
+import myPlugin from "./plugins/myPlugin";
+// 安装插件
+Vue.use(myPlugin, {
+    name: "upper",
+});
+
+// 引入校验插件
+import validate from '@/plugins/validate';
+
 Vue.config.productionTip = false;
 
 new Vue({

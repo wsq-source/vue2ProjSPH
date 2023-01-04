@@ -96,7 +96,7 @@ export default {
         // 因为dispatch当中涉及到异步语句, 导致v-for遍历的时候结构还没有完全加载
 
         setTimeout(() => {
-            console.log("load swiper");
+            // console.log("load swiper");
         }, 2000);
     },
     computed: {

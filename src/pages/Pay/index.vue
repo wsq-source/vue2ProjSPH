@@ -92,11 +92,15 @@
 </template>
 
 <script>
+import QRCode from "qrcode";
+
 export default {
   name: "Pay",
   data() {
     return {
       payInfo: {},
+      timer: null,
+      code: "", // 支付状态码
     };
   },
   computed: {
@@ -115,16 +119,65 @@ export default {
       }
     },
     // 弹出框(遮罩层) 
-    open(){
-      this.$alert('<strong>这是 <i>HTML</i> 片段</strong>', 'HTML 片段', {
+    async open(){
+      // 生成二维码(地址)
+      let url = await QRCode.toDataURL(this.payInfo.codeUrl);
+      console.log(url);
+      this.$alert(`<img src=${url} />`, '请微信扫码', {
         dangerouslyUseHTMLString: true, // 是否将 message 属性作为 HTML 片段处理
         center: true, // 是否居中布局
         showCancelButton: true, // 是否显示取消按钮
         cancelButtonText: "支付遇见问题", // 取消按钮的文本内容
         confirmButtonText: "已支付成功", // 确定按钮的文本内容
         showClose: false, // 是否显示右上角的关闭按钮
-      });
-    }
+        // 关闭前的回调(按键类型, 当前组件实例, 关闭弹出框函数)
+        beforeClose: (type, instance, done) => {
+          if(type === "cancel"){
+            // 提示信息
+            alert("请联系管理员");
+            // 清除定时器
+            clearInterval(this.timer);
+            this.timer = null;
+            // 关闭弹出框
+            done();
+          }else{
+            // 判断是否真的支付了
+            // if(this.code === 200){
+              // 清除定时器
+              clearInterval(this.timer);
+              this.timer = null;
+              // 关闭弹出框
+              done();
+              // 路由跳转
+              this.$router.push("/paysuccess");
+            // }
+          }
+        },
+      }).then(()=>{}).catch(()=>{});
+      // 需要知道是否支付成功
+      // 支付成功, 路由跳转; 支付失败, 提示信息
+      // 定时器没有, 开启一个新的定时器
+      if(!this.timer){
+        this.timer = setInterval(async () => {
+          // 发请求获取用户支付状态
+          let result = await this.$API.reqPayStatus(this.orderId);
+          console.log(result);
+          // 支付成功, 判断code是否为205防止用户没扫直接点支付成功
+          if(result.code === 200){
+            // 1.清除定时器
+            clearInterval(this.timer);
+            this.timer = null;
+            // 2.保存支付成功返回的code
+            this.code = result.code;
+            // 3.关闭弹出框
+            this.$msgbox.close();
+            // 4.跳转到下一路由(支付成功)
+            this.$router.push("/paysuccess");
+          }
+        }, 1000);
+      }
+      
+    },
   },
   // 别在生命周期函数中使用async|await, 将相关代码写到methods中的一个方法里
   mounted(){

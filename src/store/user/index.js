@@ -36,7 +36,7 @@ const actions = {
             commit("GETCODE", result.data);
             return "ok";
         }else{
-            return Promise.reject(new Error("failed"));
+            return Promise.reject(new Error("getCode failed"));
         }
     },
     // 用户注册
@@ -46,7 +46,7 @@ const actions = {
         if(result.code === 200){
             return "ok";
         }else{
-            return Promise.reject(new Error("failed"));
+            return Promise.reject(new Error("userRegister failed"));
         }
     },
     // 用户登录(token)

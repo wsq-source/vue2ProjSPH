@@ -352,8 +352,13 @@
       Zoom
     },
     mounted(){
-      // 派发action获取产品详情的信息
-      this.$store.dispatch("getGoodInfo", this.$route.params.skuid); // skuid在路由中
+      // 调用methods中的方法
+      this.getData();
+    },
+    beforeRouteUpdate(to, from, next){
+      console.log("Detail组件中的路由改变了", to, from);
+      this.getData();
+      next();
     },
     computed: {
       ...mapGetters(["categoryView", "skuInfo", "spuSaleAttrList"]),
@@ -364,6 +369,11 @@
       },
     },
     methods: {
+      // 获取产品信息
+      getData(){
+        // 派发action获取产品详情的信息
+        this.$store.dispatch("getGoodInfo", this.$route.params.skuid); // skuid在路由中
+      },
       // 产品的售卖属性切换高亮
       changeActive(saleAttrValue, valueArr){
         valueArr.forEach(el => el.isChecked = "0"); // 所有的都没高亮

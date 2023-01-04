@@ -159,7 +159,7 @@ export default {
         // 路由跳转传参
         this.$router.push(`/pay?orderId=${this.orderId}`);
       }else{
-        console.log(result.data);
+        console.log("跳转失败, result.data为 ",result.data);
       }
     },
   },

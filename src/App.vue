@@ -1,5 +1,6 @@
 <template>
     <div>
+        <!-- <h1 v-upper="msg"></h1> -->
         <Header />
         <!-- 路由组件出口 -->
         <router-view></router-view>
@@ -27,6 +28,7 @@ export default {
     data() {
         return {
             isShowFooter: this.$route.path.includes("/home") || this.$route.path.includes("/search"),
+            msg: "abc",
         };
     },
     components: { Header, Footer },
